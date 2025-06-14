@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reproductor Fullscreen</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
+    }
+    #rotateMsg {
+      display: none;
+      position: fixed;
+      top: 10px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      z-index: 9999;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="rotateMsg">🔄 Gira tu pantalla para ver en modo completo</div>
+  <iframe id="streamIframe" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
+
+  <script>
+    const streamParam = new URLSearchParams(window.location.search).get("stream");
+    if (streamParam) {
+      document.getElementById("streamIframe").src = `https://stream196tp.com/global1.php?stream=${streamParam}`;
+    } else {
+      document.body.innerHTML = "<h1>⚠️ Error: Falta el parámetro 'stream'</h1>";
+    }
+
+    // Mostrar mensaje de orientación
+    function checkOrientation() {
+      if (window.innerWidth < window.innerHeight) {
+        document.getElementById('rotateMsg').style.display = 'block';
+      } else {
+        document.getElementById('rotateMsg').style.display = 'none';
+      }
+    }
+
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+    checkOrientation();
+
+    // Intentar pantalla completa
+    window.onload = () => {
+      const iframe = document.getElementById("streamIframe");
+      if (iframe.requestFullscreen) iframe.requestFullscreen();
+      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
+      else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
+    };
+  </script>
+</body>
+</html>
