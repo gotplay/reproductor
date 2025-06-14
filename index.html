@@ -1,49 +1,47 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=landscape">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=landscape" />
   <title>Reproductor GOTPLAY</title>
   <style>
-    body, html {
+    html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       background-color: black;
-      color: white;
-      font-family: sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
       overflow: hidden;
     }
-
-    #rotate-message {
-      position: absolute;
-      top: 0;
-      width: 100%;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 10px;
-      z-index: 9999;
-      display: none;
-    }
-
     iframe {
       border: none;
       width: 100vw;
       height: 100vh;
     }
+    #fullscreen-btn {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #111;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 9999;
+      display: none;
+    }
   </style>
 </head>
 <body>
 
-<div id="rotate-message">🔄 Gira tu pantalla para ver en pantalla completa</div>
-
 <iframe id="streamIframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
+<button id="fullscreen-btn">Ver en pantalla completa</button>
 
 <script>
+  const fullscreenBtn = document.getElementById('fullscreen-btn');
+
   function launchFullscreen(element) {
     if (element.requestFullscreen) {
       element.requestFullscreen();
@@ -55,17 +53,20 @@
   }
 
   function checkOrientation() {
-    const message = document.getElementById('rotate-message');
-    if (window.innerHeight > window.innerWidth) {
-      message.style.display = 'block';
+    if (window.innerHeight < window.innerWidth) {
+      fullscreenBtn.style.display = 'block';
     } else {
-      message.style.display = 'none';
-      launchFullscreen(document.documentElement);
+      fullscreenBtn.style.display = 'none';
     }
   }
 
-  window.addEventListener("orientationchange", checkOrientation);
-  window.addEventListener("resize", checkOrientation);
+  fullscreenBtn.onclick = () => {
+    launchFullscreen(document.documentElement);
+    fullscreenBtn.style.display = 'none';
+  };
+
+  window.addEventListener('orientationchange', checkOrientation);
+  window.addEventListener('resize', checkOrientation);
 
   window.onload = function () {
     checkOrientation();
@@ -73,13 +74,13 @@
     const streamParam = urlParams.get('stream');
     if (streamParam) {
       const streamUrl = `https://streamtp4.com/global1.php?stream=${streamParam}`;
-      const iframe = document.getElementById('streamIframe');
-      iframe.src = streamUrl;
+      document.getElementById('streamIframe').src = streamUrl;
     } else {
-      document.body.innerHTML = "<h1>Error: Falta el parámetro 'stream'</h1>";
+      document.body.innerHTML = "<h1 style='color:white;'>⚠️ Error: falta el parámetro 'stream'</h1>";
     }
   };
 </script>
 
 </body>
 </html>
+
