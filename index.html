@@ -2,67 +2,84 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reproductor Fullscreen</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, orientation=landscape">
+  <title>Reproductor GOTPLAY</title>
   <style>
-    html, body {
+    body, html {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
       background-color: black;
       color: white;
       font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
     }
-    #rotateMsg {
-      display: none;
-      position: fixed;
-      top: 10px;
-      left: 0;
+
+    #rotate-message {
+      position: absolute;
+      top: 0;
       width: 100%;
+      background: #111;
+      color: #fff;
       text-align: center;
-      font-size: 18px;
+      padding: 10px;
       z-index: 9999;
+      display: none;
     }
+
     iframe {
+      border: none;
       width: 100vw;
       height: 100vh;
-      border: none;
     }
   </style>
 </head>
 <body>
-  <div id="rotateMsg">🔄 Gira tu pantalla para ver en modo completo</div>
-  <iframe id="streamIframe" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
 
-  <script>
-    const streamParam = new URLSearchParams(window.location.search).get("stream");
-    if (streamParam) {
-      document.getElementById("streamIframe").src = `https://stream196tp.com/global1.php?stream=${streamParam}`;
+<div id="rotate-message">🔄 Gira tu pantalla para ver en pantalla completa</div>
+
+<iframe id="streamIframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
+
+<script>
+  function launchFullscreen(element) {
+    if (element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if (element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if (element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  }
+
+  function checkOrientation() {
+    const message = document.getElementById('rotate-message');
+    if (window.innerHeight > window.innerWidth) {
+      message.style.display = 'block';
     } else {
-      document.body.innerHTML = "<h1>⚠️ Error: Falta el parámetro 'stream'</h1>";
+      message.style.display = 'none';
+      launchFullscreen(document.documentElement);
     }
+  }
 
-    // Mostrar mensaje de orientación
-    function checkOrientation() {
-      if (window.innerWidth < window.innerHeight) {
-        document.getElementById('rotateMsg').style.display = 'block';
-      } else {
-        document.getElementById('rotateMsg').style.display = 'none';
-      }
-    }
+  window.addEventListener("orientationchange", checkOrientation);
+  window.addEventListener("resize", checkOrientation);
 
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
+  window.onload = function () {
     checkOrientation();
+    const urlParams = new URLSearchParams(window.location.search);
+    const streamParam = urlParams.get('stream');
+    if (streamParam) {
+      const streamUrl = `https://streamtp4.com/global1.php?stream=${streamParam}`;
+      const iframe = document.getElementById('streamIframe');
+      iframe.src = streamUrl;
+    } else {
+      document.body.innerHTML = "<h1>Error: Falta el parámetro 'stream'</h1>";
+    }
+  };
+</script>
 
-    // Intentar pantalla completa
-    window.onload = () => {
-      const iframe = document.getElementById("streamIframe");
-      if (iframe.requestFullscreen) iframe.requestFullscreen();
-      else if (iframe.webkitRequestFullscreen) iframe.webkitRequestFullscreen();
-      else if (iframe.msRequestFullscreen) iframe.msRequestFullscreen();
-    };
-  </script>
 </body>
 </html>
