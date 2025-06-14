@@ -8,14 +8,25 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
       background-color: black;
+      height: 100%;
       overflow: hidden;
+      font-family: sans-serif;
+      color: white;
     }
     iframe {
-      border: none;
       width: 100vw;
       height: 100vh;
+      border: none;
+    }
+    #rotate-msg {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      font-size: 18px;
+      z-index: 1000;
+      display: none;
     }
     #fullscreen-btn {
       position: absolute;
@@ -24,22 +35,25 @@
       transform: translateX(-50%);
       background: #111;
       color: white;
-      border: none;
       padding: 12px 20px;
       font-size: 16px;
+      border: none;
       border-radius: 10px;
       cursor: pointer;
-      z-index: 9999;
+      z-index: 1000;
       display: none;
     }
   </style>
 </head>
 <body>
 
-<iframe id="streamIframe" allow="autoplay; fullscreen" allowfullscreen></iframe>
+<div id="rotate-msg">🔄 Por favor gira tu pantalla para ver el contenido</div>
+<iframe id="streamIframe" allow="autoplay; fullscreen; encrypted-media" allowfullscreen></iframe>
 <button id="fullscreen-btn">Ver en pantalla completa</button>
 
 <script>
+  const iframe = document.getElementById('streamIframe');
+  const rotateMsg = document.getElementById('rotate-msg');
   const fullscreenBtn = document.getElementById('fullscreen-btn');
 
   function launchFullscreen(element) {
@@ -53,34 +67,37 @@
   }
 
   function checkOrientation() {
-    if (window.innerHeight < window.innerWidth) {
-      fullscreenBtn.style.display = 'block';
-    } else {
+    if (window.innerHeight > window.innerWidth) {
+      rotateMsg.style.display = 'block';
       fullscreenBtn.style.display = 'none';
+    } else {
+      rotateMsg.style.display = 'none';
+      fullscreenBtn.style.display = 'block';
     }
   }
 
-  fullscreenBtn.onclick = () => {
+  fullscreenBtn.addEventListener('click', () => {
     launchFullscreen(document.documentElement);
     fullscreenBtn.style.display = 'none';
-  };
+  });
 
-  window.addEventListener('orientationchange', checkOrientation);
-  window.addEventListener('resize', checkOrientation);
+  window.addEventListener("orientationchange", checkOrientation);
+  window.addEventListener("resize", checkOrientation);
 
   window.onload = function () {
     checkOrientation();
-    const urlParams = new URLSearchParams(window.location.search);
-    const streamParam = urlParams.get('stream');
+    const params = new URLSearchParams(window.location.search);
+    const streamParam = params.get('stream');
     if (streamParam) {
       const streamUrl = `https://streamtp4.com/global1.php?stream=${streamParam}`;
-      document.getElementById('streamIframe').src = streamUrl;
+      iframe.src = streamUrl;
     } else {
-      document.body.innerHTML = "<h1 style='color:white;'>⚠️ Error: falta el parámetro 'stream'</h1>";
+      document.body.innerHTML = "<h1 style='color:white; text-align:center;'>⚠️ Error: Falta el parámetro 'stream'</h1>";
     }
   };
 </script>
 
 </body>
 </html>
+
 
